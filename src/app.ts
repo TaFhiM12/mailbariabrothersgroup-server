@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import { globalErrorHandler } from "./middlewares/error.middleware.js";
 import { appRoutes } from "./routes/index.js";
 
@@ -18,18 +18,18 @@ app.use(
 
 app.use(express.json({ limit: "10kb" }));
 
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: {
-      success: false,
-      message: "Too many requests, please try again later",
-    },
-  })
-);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many requests, please try again later",
+  },
+});
+
+app.use(limiter);
 
 app.get("/", (_req, res) => {
   res.json({
