@@ -45,4 +45,46 @@ export const authController = {
       next(error);
     }
   }) satisfies RequestHandler,
+
+  forgotPassword: (async (req, res, next) => {
+    try {
+      const result = await authService.forgotPassword(req.body);
+
+      sendResponse({
+        res,
+        statusCode: 200,
+        message: result.message,
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }) satisfies RequestHandler,
+
+  resetPassword: (async (req, res, next) => {
+    try {
+      const result = await authService.resetPassword(req.body);
+
+      sendResponse({
+        res,
+        statusCode: 200,
+        message: result.message,
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }) satisfies RequestHandler,
+  logout: (async (_req, res, next) => {
+  try {
+    sendResponse({
+      res,
+      statusCode: 200,
+      message: "Logout successful",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+}) satisfies RequestHandler,
 };
