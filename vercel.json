@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "buildCommand": "npx prisma generate && npm run build",
+  "crons": [
+    {
+      "path": "/api/v1/cron/monthly-payment-reminder",
+      "schedule": "0 0 10 * *"
+    }
+  ]
+}

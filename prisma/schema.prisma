@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  PRESIDENT
+  COORDINATOR
+  ACCOUNTANT
+  MEMBER
+}
+
+enum SavingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+  ADJUSTMENT
+}
+
+enum ReminderStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model User {
+  id       String  @id @default(cuid())
+  name     String
+  email    String  @unique
+  password String
+  role     Role    @default(MEMBER)
+  isActive Boolean @default(true)
+
+  savings      Saving[]
+  transactions Transaction[]
+  reminders    PaymentReminder[]
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Saving {
+  id     String       @id @default(cuid())
+  amount Decimal      @db.Decimal(10, 2)
+  month  String
+  note   String?
+  status SavingStatus @default(PENDING)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  approvedBy String?
+  approvedAt DateTime?
+  rejectedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([month])
+  @@index([status])
+  @@map("savings")
+}
+
+model Transaction {
+  id     String          @id @default(cuid())
+  amount Decimal         @db.Decimal(10, 2)
+  type   TransactionType
+  note   String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@map("transactions")
+}
+
+model PaymentReminder {
+  id      String         @id @default(cuid())
+  month   String
+  message String
+  status  ReminderStatus @default(PENDING)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([month])
+  @@index([status])
+  @@map("payment_reminders")
+}
+
+model Notice {
+  id    String @id @default(cuid())
+  title String
+  body  String
+
+  createdBy String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notices")
+}
+
+model AuditLog {
+  id       String  @id @default(cuid())
+  action   String
+  userId   String?
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model Notification {
+  id      String  @id @default(cuid())
+  title   String
+  message String
+  isRead  Boolean @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+enum ExpenseStatus {
+  ACTIVE
+  CANCELLED
+}
+
+model Expense {
+  id          String        @id @default(cuid())
+  title       String
+  amount      Decimal       @db.Decimal(10, 2)
+  description String?
+
+  status      ExpenseStatus @default(ACTIVE)
+
+  createdBy   String
+  cancelledBy String?
+  cancelledAt DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([createdBy])
+  @@index([status])
+  @@map("expenses")
+}
+
+enum LedgerType {
+  SAVING
+  EXPENSE
+  ADJUSTMENT
+}
+
+model Ledger {
+  id          String     @id @default(cuid())
+
+  type        LedgerType
+
+  amount      Decimal    @db.Decimal(10,2)
+
+  description String?
+
+  referenceId String?
+
+  createdBy   String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([type])
+  @@map("ledger")
+}
+
+model ClubSetting {
+  id                   String  @id @default(cuid())
+  clubName             String  @default("Savings Club")
+  monthlySavingAmount  Decimal @db.Decimal(10, 2)
+  paymentDeadlineDay   Int     @default(10)
+  reminderEnabled      Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("club_settings")
+}
