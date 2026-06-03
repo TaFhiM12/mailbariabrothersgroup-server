@@ -1,12 +1,13 @@
-import express from "express";
+import express, { type RequestHandler } from "express";
 import cors from "cors";
-import helmet from "helmet";
+import helmetPkg from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { globalErrorHandler } from "./middlewares/error.middleware.js";
 import { appRoutes } from "./routes/index.js";
 
 const app = express();
 
+const helmet = helmetPkg as unknown as () => RequestHandler;
 app.use(helmet());
 
 app.use(
