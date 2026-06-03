@@ -40,6 +40,8 @@ model User {
   role     Role    @default(MEMBER)
   isActive Boolean @default(true)
 
+  imageUrl String?
+
   passwordResetToken   String?
   passwordResetExpires DateTime?
 
@@ -60,6 +62,8 @@ model Saving {
   month  String
   note   String?
   status SavingStatus @default(PENDING)
+
+  proofImageUrl String?
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -164,6 +168,8 @@ model Expense {
   title       String
   amount      Decimal       @db.Decimal(10, 2)
   description String?
+
+  imageUrl    String?
 
   status      ExpenseStatus @default(ACTIVE)
 

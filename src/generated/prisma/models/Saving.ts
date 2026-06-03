@@ -40,6 +40,7 @@ export type SavingMinAggregateOutputType = {
   month: string | null
   note: string | null
   status: $Enums.SavingStatus | null
+  proofImageUrl: string | null
   userId: string | null
   approvedBy: string | null
   approvedAt: Date | null
@@ -54,6 +55,7 @@ export type SavingMaxAggregateOutputType = {
   month: string | null
   note: string | null
   status: $Enums.SavingStatus | null
+  proofImageUrl: string | null
   userId: string | null
   approvedBy: string | null
   approvedAt: Date | null
@@ -68,6 +70,7 @@ export type SavingCountAggregateOutputType = {
   month: number
   note: number
   status: number
+  proofImageUrl: number
   userId: number
   approvedBy: number
   approvedAt: number
@@ -92,6 +95,7 @@ export type SavingMinAggregateInputType = {
   month?: true
   note?: true
   status?: true
+  proofImageUrl?: true
   userId?: true
   approvedBy?: true
   approvedAt?: true
@@ -106,6 +110,7 @@ export type SavingMaxAggregateInputType = {
   month?: true
   note?: true
   status?: true
+  proofImageUrl?: true
   userId?: true
   approvedBy?: true
   approvedAt?: true
@@ -120,6 +125,7 @@ export type SavingCountAggregateInputType = {
   month?: true
   note?: true
   status?: true
+  proofImageUrl?: true
   userId?: true
   approvedBy?: true
   approvedAt?: true
@@ -221,6 +227,7 @@ export type SavingGroupByOutputType = {
   month: string
   note: string | null
   status: $Enums.SavingStatus
+  proofImageUrl: string | null
   userId: string
   approvedBy: string | null
   approvedAt: Date | null
@@ -258,6 +265,7 @@ export type SavingWhereInput = {
   month?: Prisma.StringFilter<"Saving"> | string
   note?: Prisma.StringNullableFilter<"Saving"> | string | null
   status?: Prisma.EnumSavingStatusFilter<"Saving"> | $Enums.SavingStatus
+  proofImageUrl?: Prisma.StringNullableFilter<"Saving"> | string | null
   userId?: Prisma.StringFilter<"Saving"> | string
   approvedBy?: Prisma.StringNullableFilter<"Saving"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Saving"> | Date | string | null
@@ -273,6 +281,7 @@ export type SavingOrderByWithRelationInput = {
   month?: Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  proofImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   approvedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -291,6 +300,7 @@ export type SavingWhereUniqueInput = Prisma.AtLeast<{
   month?: Prisma.StringFilter<"Saving"> | string
   note?: Prisma.StringNullableFilter<"Saving"> | string | null
   status?: Prisma.EnumSavingStatusFilter<"Saving"> | $Enums.SavingStatus
+  proofImageUrl?: Prisma.StringNullableFilter<"Saving"> | string | null
   userId?: Prisma.StringFilter<"Saving"> | string
   approvedBy?: Prisma.StringNullableFilter<"Saving"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Saving"> | Date | string | null
@@ -306,6 +316,7 @@ export type SavingOrderByWithAggregationInput = {
   month?: Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  proofImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   approvedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -328,6 +339,7 @@ export type SavingScalarWhereWithAggregatesInput = {
   month?: Prisma.StringWithAggregatesFilter<"Saving"> | string
   note?: Prisma.StringNullableWithAggregatesFilter<"Saving"> | string | null
   status?: Prisma.EnumSavingStatusWithAggregatesFilter<"Saving"> | $Enums.SavingStatus
+  proofImageUrl?: Prisma.StringNullableWithAggregatesFilter<"Saving"> | string | null
   userId?: Prisma.StringWithAggregatesFilter<"Saving"> | string
   approvedBy?: Prisma.StringNullableWithAggregatesFilter<"Saving"> | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Saving"> | Date | string | null
@@ -342,6 +354,7 @@ export type SavingCreateInput = {
   month: string
   note?: string | null
   status?: $Enums.SavingStatus
+  proofImageUrl?: string | null
   approvedBy?: string | null
   approvedAt?: Date | string | null
   rejectedAt?: Date | string | null
@@ -356,6 +369,7 @@ export type SavingUncheckedCreateInput = {
   month: string
   note?: string | null
   status?: $Enums.SavingStatus
+  proofImageUrl?: string | null
   userId: string
   approvedBy?: string | null
   approvedAt?: Date | string | null
@@ -370,6 +384,7 @@ export type SavingUpdateInput = {
   month?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSavingStatusFieldUpdateOperationsInput | $Enums.SavingStatus
+  proofImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -384,6 +399,7 @@ export type SavingUncheckedUpdateInput = {
   month?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSavingStatusFieldUpdateOperationsInput | $Enums.SavingStatus
+  proofImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   approvedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -398,6 +414,7 @@ export type SavingCreateManyInput = {
   month: string
   note?: string | null
   status?: $Enums.SavingStatus
+  proofImageUrl?: string | null
   userId: string
   approvedBy?: string | null
   approvedAt?: Date | string | null
@@ -412,6 +429,7 @@ export type SavingUpdateManyMutationInput = {
   month?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSavingStatusFieldUpdateOperationsInput | $Enums.SavingStatus
+  proofImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -425,6 +443,7 @@ export type SavingUncheckedUpdateManyInput = {
   month?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSavingStatusFieldUpdateOperationsInput | $Enums.SavingStatus
+  proofImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   approvedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -449,6 +468,7 @@ export type SavingCountOrderByAggregateInput = {
   month?: Prisma.SortOrder
   note?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  proofImageUrl?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   approvedBy?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
@@ -467,6 +487,7 @@ export type SavingMaxOrderByAggregateInput = {
   month?: Prisma.SortOrder
   note?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  proofImageUrl?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   approvedBy?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
@@ -481,6 +502,7 @@ export type SavingMinOrderByAggregateInput = {
   month?: Prisma.SortOrder
   note?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  proofImageUrl?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   approvedBy?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
@@ -553,6 +575,7 @@ export type SavingCreateWithoutUserInput = {
   month: string
   note?: string | null
   status?: $Enums.SavingStatus
+  proofImageUrl?: string | null
   approvedBy?: string | null
   approvedAt?: Date | string | null
   rejectedAt?: Date | string | null
@@ -566,6 +589,7 @@ export type SavingUncheckedCreateWithoutUserInput = {
   month: string
   note?: string | null
   status?: $Enums.SavingStatus
+  proofImageUrl?: string | null
   approvedBy?: string | null
   approvedAt?: Date | string | null
   rejectedAt?: Date | string | null
@@ -608,6 +632,7 @@ export type SavingScalarWhereInput = {
   month?: Prisma.StringFilter<"Saving"> | string
   note?: Prisma.StringNullableFilter<"Saving"> | string | null
   status?: Prisma.EnumSavingStatusFilter<"Saving"> | $Enums.SavingStatus
+  proofImageUrl?: Prisma.StringNullableFilter<"Saving"> | string | null
   userId?: Prisma.StringFilter<"Saving"> | string
   approvedBy?: Prisma.StringNullableFilter<"Saving"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Saving"> | Date | string | null
@@ -622,6 +647,7 @@ export type SavingCreateManyUserInput = {
   month: string
   note?: string | null
   status?: $Enums.SavingStatus
+  proofImageUrl?: string | null
   approvedBy?: string | null
   approvedAt?: Date | string | null
   rejectedAt?: Date | string | null
@@ -635,6 +661,7 @@ export type SavingUpdateWithoutUserInput = {
   month?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSavingStatusFieldUpdateOperationsInput | $Enums.SavingStatus
+  proofImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -648,6 +675,7 @@ export type SavingUncheckedUpdateWithoutUserInput = {
   month?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSavingStatusFieldUpdateOperationsInput | $Enums.SavingStatus
+  proofImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -661,6 +689,7 @@ export type SavingUncheckedUpdateManyWithoutUserInput = {
   month?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSavingStatusFieldUpdateOperationsInput | $Enums.SavingStatus
+  proofImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -676,6 +705,7 @@ export type SavingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   month?: boolean
   note?: boolean
   status?: boolean
+  proofImageUrl?: boolean
   userId?: boolean
   approvedBy?: boolean
   approvedAt?: boolean
@@ -691,6 +721,7 @@ export type SavingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   month?: boolean
   note?: boolean
   status?: boolean
+  proofImageUrl?: boolean
   userId?: boolean
   approvedBy?: boolean
   approvedAt?: boolean
@@ -706,6 +737,7 @@ export type SavingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   month?: boolean
   note?: boolean
   status?: boolean
+  proofImageUrl?: boolean
   userId?: boolean
   approvedBy?: boolean
   approvedAt?: boolean
@@ -721,6 +753,7 @@ export type SavingSelectScalar = {
   month?: boolean
   note?: boolean
   status?: boolean
+  proofImageUrl?: boolean
   userId?: boolean
   approvedBy?: boolean
   approvedAt?: boolean
@@ -729,7 +762,7 @@ export type SavingSelectScalar = {
   updatedAt?: boolean
 }
 
-export type SavingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "month" | "note" | "status" | "userId" | "approvedBy" | "approvedAt" | "rejectedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["saving"]>
+export type SavingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "month" | "note" | "status" | "proofImageUrl" | "userId" | "approvedBy" | "approvedAt" | "rejectedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["saving"]>
 export type SavingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -751,6 +784,7 @@ export type $SavingPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     month: string
     note: string | null
     status: $Enums.SavingStatus
+    proofImageUrl: string | null
     userId: string
     approvedBy: string | null
     approvedAt: Date | null
@@ -1186,6 +1220,7 @@ export interface SavingFieldRefs {
   readonly month: Prisma.FieldRef<"Saving", 'String'>
   readonly note: Prisma.FieldRef<"Saving", 'String'>
   readonly status: Prisma.FieldRef<"Saving", 'SavingStatus'>
+  readonly proofImageUrl: Prisma.FieldRef<"Saving", 'String'>
   readonly userId: Prisma.FieldRef<"Saving", 'String'>
   readonly approvedBy: Prisma.FieldRef<"Saving", 'String'>
   readonly approvedAt: Prisma.FieldRef<"Saving", 'DateTime'>

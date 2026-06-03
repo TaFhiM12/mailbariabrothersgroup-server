@@ -5,6 +5,7 @@ export const createSavingSchema = z.object({
     amount: z.coerce.number().positive("Amount must be positive"),
     month: z.string().regex(/^\d{4}-\d{2}$/, "Month must be like 2026-06"),
     note: z.string().optional(),
+    proofImageUrl: z.url("Invalid image URL").optional(),
   }),
 });
 

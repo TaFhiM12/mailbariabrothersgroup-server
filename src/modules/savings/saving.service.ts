@@ -23,6 +23,7 @@ export const savingService = {
         amount: payload.amount,
         month: payload.month,
         note: payload.note,
+        proofImageUrl: payload.proofImageUrl
       },
     });
 
@@ -33,6 +34,7 @@ export const savingService = {
         savingId: saving.id,
         amount: String(saving.amount),
         month: saving.month,
+        proofImageUrl: saving.proofImageUrl,
       },
     });
 

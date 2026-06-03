@@ -5,6 +5,7 @@ export const createExpenseSchema = z.object({
     title: z.string().min(2, "Title is required"),
     amount: z.coerce.number().positive("Amount must be positive"),
     description: z.string().optional(),
+    imageUrl: z.url("Invalid image URL").optional(),
   }),
 });
 
@@ -16,6 +17,7 @@ export const updateExpenseSchema = z.object({
     title: z.string().min(2).optional(),
     amount: z.coerce.number().positive().optional(),
     description: z.string().optional(),
+    imageUrl: z.url("Invalid image URL").optional(),
   }),
 });
 

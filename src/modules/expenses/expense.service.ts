@@ -12,6 +12,7 @@ export const expenseService = {
         title: payload.title,
         amount: payload.amount,
         description: payload.description,
+        imageUrl: payload.imageUrl,
         createdBy,
       },
     });
