@@ -85,6 +85,7 @@ model Saving {
   @@index([userId])
   @@index([month])
   @@index([status])
+  @@unique([userId, month])
   @@map("savings")
 }
 
@@ -119,6 +120,7 @@ model PaymentReminder {
   @@index([userId])
   @@index([month])
   @@index([status])
+  @@unique([userId, month])
   @@map("payment_reminders")
 }
 
@@ -214,6 +216,7 @@ model Ledger {
   createdAt   DateTime @default(now())
 
   @@index([type])
+  @@unique([type, referenceId])
   @@map("ledger")
 }
 

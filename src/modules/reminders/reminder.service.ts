@@ -1,6 +1,8 @@
 import { prisma } from "../../config/database.js";
+import { Role } from "../../generated/prisma/enums.js";
 import { sendEmail } from "../../lib/email.js";
 import { notificationService } from "../notifications/notification.service.js";
+import { settingService } from "../settings/setting.service.js";
 import type { CreateMonthlyReminderInput } from "./reminder.validation.js";
 
 const getCurrentMonth = () => {
@@ -14,6 +16,7 @@ export const reminderService = {
     const members = await prisma.user.findMany({
       where: {
         isActive: true,
+        role: Role.MEMBER,
       },
       select: {
         id: true,
@@ -48,20 +51,34 @@ export const reminderService = {
         },
       });
 
-      if (existingReminder) {
+      if (
+        existingReminder &&
+        (existingReminder.status === "SENT" ||
+          existingReminder.status === "PENDING")
+      ) {
         continue;
       }
 
       const message = `Dear ${member.name}, please pay your club savings for ${payload.month}.`;
 
-      const reminder = await prisma.paymentReminder.create({
-        data: {
-          userId: member.id,
-          month: payload.month,
-          message,
-          status: "PENDING",
-        },
-      });
+      const reminder = existingReminder
+        ? await prisma.paymentReminder.update({
+            where: {
+              id: existingReminder.id,
+            },
+            data: {
+              message,
+              status: "PENDING",
+            },
+          })
+        : await prisma.paymentReminder.create({
+            data: {
+              userId: member.id,
+              month: payload.month,
+              message,
+              status: "PENDING",
+            },
+          });
 
       await notificationService.createNotification({
         userId: member.id,
@@ -117,6 +134,30 @@ export const reminderService = {
 
   createAutomaticMonthlyReminders: async () => {
     const month = getCurrentMonth();
+    const settings = await settingService.getSettings();
+    const today = new Date();
+
+    if (!settings.reminderEnabled) {
+      return {
+        month,
+        skipped: true,
+        reason: "Monthly reminders are disabled",
+        unpaidMembersCount: 0,
+        remindersCreated: 0,
+        reminders: [],
+      };
+    }
+
+    if (today.getDate() < settings.paymentDeadlineDay) {
+      return {
+        month,
+        skipped: true,
+        reason: `Payment deadline day ${settings.paymentDeadlineDay} has not passed`,
+        unpaidMembersCount: 0,
+        remindersCreated: 0,
+        reminders: [],
+      };
+    }
 
     return reminderService.createMonthlyReminders({
       month,

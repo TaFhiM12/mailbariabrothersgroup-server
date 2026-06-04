@@ -18,7 +18,7 @@ export const globalErrorHandler: ErrorRequestHandler = (
 
   if (error instanceof ZodError) {
     statusCode = 400;
-    message = "Validation error";
+    message = error.issues[0]?.message || "Validation error";
   }
 
   res.status(statusCode).json({

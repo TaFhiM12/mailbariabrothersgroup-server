@@ -1,4 +1,5 @@
 import { prisma } from "../../config/database.js";
+import { Role } from "../../generated/prisma/enums.js";
 
 const getCurrentMonth = () => {
   const now = new Date();
@@ -26,11 +27,11 @@ export const dashboardService = {
       recentExpenses,
       unreadNotifications,
     ] = await Promise.all([
-      prisma.user.count(),
+      prisma.user.count({ where: { role: Role.MEMBER } }),
 
-      prisma.user.count({ where: { isActive: true } }),
+      prisma.user.count({ where: { isActive: true, role: Role.MEMBER } }),
 
-      prisma.user.count({ where: { isActive: false } }),
+      prisma.user.count({ where: { isActive: false, role: Role.MEMBER } }),
 
       prisma.saving.aggregate({
         where: { status: "APPROVED" },
@@ -150,7 +151,7 @@ export const dashboardService = {
       recentExpenses,
       unreadNotifications,
     ] = await Promise.all([
-      prisma.user.count({ where: { isActive: true } }),
+      prisma.user.count({ where: { isActive: true, role: Role.MEMBER } }),
 
       prisma.saving.aggregate({
         where: { status: "APPROVED" },
@@ -240,11 +241,11 @@ export const dashboardService = {
       recentNotices,
       unreadNotifications,
     ] = await Promise.all([
-      prisma.user.count(),
+      prisma.user.count({ where: { role: Role.MEMBER } }),
 
-      prisma.user.count({ where: { isActive: true } }),
+      prisma.user.count({ where: { isActive: true, role: Role.MEMBER } }),
 
-      prisma.user.count({ where: { isActive: false } }),
+      prisma.user.count({ where: { isActive: false, role: Role.MEMBER } }),
 
       prisma.saving.findMany({
         where: {
