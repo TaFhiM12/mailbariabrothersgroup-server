@@ -10,15 +10,22 @@ const app = express();
 const helmet = helmetPkg as unknown as () => RequestHandler;
 app.use(helmet());
 
+const normalizeOrigin = (origin: string) => origin.replace(/\/$/, "");
+
 const allowedOrigins = (process.env.CLIENT_URL || "")
   .split(",")
   .map((origin) => origin.trim())
+  .map(normalizeOrigin)
   .filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      if (
+        !origin ||
+        allowedOrigins.length === 0 ||
+        allowedOrigins.includes(normalizeOrigin(origin))
+      ) {
         callback(null, true);
         return;
       }
