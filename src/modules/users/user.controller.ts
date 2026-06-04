@@ -3,6 +3,21 @@ import { sendResponse } from "../../common/utils/sendResponse.js";
 import { userService } from "./user.service.js";
 
 export const userController = {
+  updateMyProfile: (async (req, res, next) => {
+    try {
+      const result = await userService.updateMyProfile(req.user!.id, req.body);
+
+      sendResponse({
+        res,
+        statusCode: 200,
+        message: "Profile updated successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }) satisfies RequestHandler,
+
   getAllUsers: (async (_req, res, next) => {
     try {
       const result = await userService.getAllUsers();

@@ -19,9 +19,35 @@ const sanitizeUser = (user: {
   email: string;
   role: Role;
   isActive: boolean;
+  imageUrl?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  occupation?: string | null;
+  dateOfBirth?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  bio?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }) => user;
+
+const authUserSelect = {
+  id: true,
+  name: true,
+  email: true,
+  role: true,
+  isActive: true,
+  imageUrl: true,
+  phone: true,
+  address: true,
+  occupation: true,
+  dateOfBirth: true,
+  emergencyContactName: true,
+  emergencyContactPhone: true,
+  bio: true,
+  createdAt: true,
+  updatedAt: true,
+};
 
 export const authService = {
   register: async (payload: RegisterInput) => {
@@ -47,15 +73,7 @@ export const authService = {
         password: hashedPassword,
         role: Role.MEMBER,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: authUserSelect,
     });
 
     const token = await createToken({
@@ -98,8 +116,12 @@ export const authService = {
       role: user.role,
     });
 
-    const { password, passwordResetToken, passwordResetExpires, ...safeUser } =
-      user;
+    const {
+      password,
+      passwordResetToken,
+      passwordResetExpires,
+      ...safeUser
+    } = user;
 
     return {
       user: safeUser,

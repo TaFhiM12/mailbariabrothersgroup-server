@@ -41,6 +41,13 @@ model User {
   isActive Boolean @default(true)
 
   imageUrl String?
+  phone String?
+  address String?
+  occupation String?
+  dateOfBirth String?
+  emergencyContactName String?
+  emergencyContactPhone String?
+  bio String?
 
   passwordResetToken   String?
   passwordResetExpires DateTime?

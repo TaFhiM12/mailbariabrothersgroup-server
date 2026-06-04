@@ -1,19 +1,68 @@
 import { prisma } from "../../config/database.js";
 import { AppError } from "../../common/errors/AppError.js";
 import type { Role } from "../../generated/prisma/enums.js";
+import type { UpdateMyProfileInput } from "./user.validation.js";
+
+const userSelect = {
+  id: true,
+  name: true,
+  email: true,
+  role: true,
+  isActive: true,
+  imageUrl: true,
+  phone: true,
+  address: true,
+  occupation: true,
+  dateOfBirth: true,
+  emergencyContactName: true,
+  emergencyContactPhone: true,
+  bio: true,
+  createdAt: true,
+  updatedAt: true,
+};
+
+const normalizeOptionalString = (value: string | undefined) => {
+  if (value === undefined) return undefined;
+
+  const trimmedValue = value.trim();
+
+  return trimmedValue.length > 0 ? trimmedValue : null;
+};
+
+const normalizeRequiredString = (value: string | undefined) => {
+  if (value === undefined) return undefined;
+
+  return value.trim();
+};
 
 export const userService = {
+  updateMyProfile: async (id: string, payload: UpdateMyProfileInput) => {
+    const updateData = {
+      name: normalizeRequiredString(payload.name),
+      imageUrl: normalizeOptionalString(payload.imageUrl),
+      phone: normalizeOptionalString(payload.phone),
+      address: normalizeOptionalString(payload.address),
+      occupation: normalizeOptionalString(payload.occupation),
+      dateOfBirth: normalizeOptionalString(payload.dateOfBirth),
+      emergencyContactName: normalizeOptionalString(
+        payload.emergencyContactName
+      ),
+      emergencyContactPhone: normalizeOptionalString(
+        payload.emergencyContactPhone
+      ),
+      bio: normalizeOptionalString(payload.bio),
+    };
+
+    return prisma.user.update({
+      where: { id },
+      data: updateData,
+      select: userSelect,
+    });
+  },
+
   getAllUsers: async () => {
     return prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
       orderBy: {
         createdAt: "desc",
       },
@@ -23,15 +72,7 @@ export const userService = {
   getSingleUser: async (id: string) => {
     const user = await prisma.user.findUnique({
       where: { id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     });
 
     if (!user) {
@@ -53,15 +94,7 @@ export const userService = {
     return prisma.user.update({
       where: { id },
       data: { role },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     });
   },
 
@@ -77,15 +110,7 @@ export const userService = {
     return prisma.user.update({
       where: { id },
       data: { isActive },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     });
   },
 };

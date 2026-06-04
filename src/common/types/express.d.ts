@@ -8,6 +8,14 @@ declare global {
       email: string;
       role: Role;
       isActive: boolean;
+      imageUrl?: string | null;
+      phone?: string | null;
+      address?: string | null;
+      occupation?: string | null;
+      dateOfBirth?: string | null;
+      emergencyContactName?: string | null;
+      emergencyContactPhone?: string | null;
+      bio?: string | null;
       createdAt: Date;
       updatedAt: Date;
     }

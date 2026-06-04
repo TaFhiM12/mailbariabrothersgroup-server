@@ -5,6 +5,7 @@ import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { roleMiddleware } from "../../middlewares/role.middleware.js";
 import { validateRequest } from "../../middlewares/validateRequest.middleware.js";
 import {
+  updateMyProfileSchema,
   updateUserRoleSchema,
   updateUserStatusSchema,
 } from "./user.validation.js";
@@ -12,6 +13,12 @@ import {
 const router = Router();
 
 router.use(authMiddleware);
+
+router.patch(
+  "/me",
+  validateRequest(updateMyProfileSchema),
+  userController.updateMyProfile
+);
 
 router.get(
   "/",
