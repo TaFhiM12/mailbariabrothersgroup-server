@@ -1,5 +1,4 @@
 import { prisma } from "../../config/database.js";
-import { Role } from "../../generated/prisma/enums.js";
 
 const getCurrentMonth = () => {
   const now = new Date();
@@ -27,11 +26,11 @@ export const dashboardService = {
       recentExpenses,
       unreadNotifications,
     ] = await Promise.all([
-      prisma.user.count({ where: { role: Role.MEMBER } }),
+      prisma.user.count({}),
 
-      prisma.user.count({ where: { isActive: true, role: Role.MEMBER } }),
+      prisma.user.count({ where: { isActive: true } }),
 
-      prisma.user.count({ where: { isActive: false, role: Role.MEMBER } }),
+      prisma.user.count({ where: { isActive: false } }),
 
       prisma.saving.aggregate({
         where: { status: "APPROVED" },
@@ -62,6 +61,11 @@ export const dashboardService = {
         where: {
           month,
           status: "APPROVED",
+          user: {
+            is: {
+              isActive: true,
+            },
+          },
         },
         select: { userId: true },
       }),
@@ -151,7 +155,7 @@ export const dashboardService = {
       recentExpenses,
       unreadNotifications,
     ] = await Promise.all([
-      prisma.user.count({ where: { isActive: true, role: Role.MEMBER } }),
+      prisma.user.count({ where: { isActive: true } }),
 
       prisma.saving.aggregate({
         where: { status: "APPROVED" },
@@ -169,6 +173,11 @@ export const dashboardService = {
         where: {
           month,
           status: "APPROVED",
+          user: {
+            is: {
+              isActive: true,
+            },
+          },
         },
         select: { userId: true },
       }),
@@ -241,16 +250,21 @@ export const dashboardService = {
       recentNotices,
       unreadNotifications,
     ] = await Promise.all([
-      prisma.user.count({ where: { role: Role.MEMBER } }),
+      prisma.user.count({}),
 
-      prisma.user.count({ where: { isActive: true, role: Role.MEMBER } }),
+      prisma.user.count({ where: { isActive: true } }),
 
-      prisma.user.count({ where: { isActive: false, role: Role.MEMBER } }),
+      prisma.user.count({ where: { isActive: false } }),
 
       prisma.saving.findMany({
         where: {
           month,
           status: "APPROVED",
+          user: {
+            is: {
+              isActive: true,
+            },
+          },
         },
         select: { userId: true },
       }),

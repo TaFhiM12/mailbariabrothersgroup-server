@@ -214,6 +214,7 @@ export type PaymentReminderOrderByWithRelationInput = {
 
 export type PaymentReminderWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  userId_month?: Prisma.PaymentReminderUserIdMonthCompoundUniqueInput
   AND?: Prisma.PaymentReminderWhereInput | Prisma.PaymentReminderWhereInput[]
   OR?: Prisma.PaymentReminderWhereInput[]
   NOT?: Prisma.PaymentReminderWhereInput | Prisma.PaymentReminderWhereInput[]
@@ -224,7 +225,7 @@ export type PaymentReminderWhereUniqueInput = Prisma.AtLeast<{
   sentAt?: Prisma.DateTimeNullableFilter<"PaymentReminder"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentReminder"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "userId_month">
 
 export type PaymentReminderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -329,6 +330,11 @@ export type PaymentReminderListRelationFilter = {
 
 export type PaymentReminderOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type PaymentReminderUserIdMonthCompoundUniqueInput = {
+  userId: string
+  month: string
 }
 
 export type PaymentReminderCountOrderByAggregateInput = {

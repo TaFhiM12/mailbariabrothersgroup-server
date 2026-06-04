@@ -1,5 +1,4 @@
 import { prisma } from "../../config/database.js";
-import { Role } from "../../generated/prisma/enums.js";
 
 export const reportService = {
   monthlyCollectionReport: async (month: string) => {
@@ -81,7 +80,6 @@ export const reportService = {
     const activeMembers = await prisma.user.findMany({
       where: {
         isActive: true,
-        role: Role.MEMBER,
       },
       select: {
         id: true,
@@ -98,6 +96,11 @@ export const reportService = {
       where: {
         month,
         status: "APPROVED",
+        user: {
+          is: {
+            isActive: true,
+          },
+        },
       },
       select: {
         userId: true,

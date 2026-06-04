@@ -1,5 +1,4 @@
 import { prisma } from "../../config/database.js";
-import { Role } from "../../generated/prisma/enums.js";
 import { sendEmail } from "../../lib/email.js";
 import { notificationService } from "../notifications/notification.service.js";
 import { settingService } from "../settings/setting.service.js";
@@ -16,7 +15,6 @@ export const reminderService = {
     const members = await prisma.user.findMany({
       where: {
         isActive: true,
-        role: Role.MEMBER,
       },
       select: {
         id: true,
@@ -29,6 +27,11 @@ export const reminderService = {
       where: {
         month: payload.month,
         status: "APPROVED",
+        user: {
+          is: {
+            isActive: true,
+          },
+        },
       },
       select: {
         userId: true,

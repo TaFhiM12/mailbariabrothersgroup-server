@@ -293,6 +293,7 @@ export type SavingOrderByWithRelationInput = {
 
 export type SavingWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  userId_month?: Prisma.SavingUserIdMonthCompoundUniqueInput
   AND?: Prisma.SavingWhereInput | Prisma.SavingWhereInput[]
   OR?: Prisma.SavingWhereInput[]
   NOT?: Prisma.SavingWhereInput | Prisma.SavingWhereInput[]
@@ -308,7 +309,7 @@ export type SavingWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Saving"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Saving"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "userId_month">
 
 export type SavingOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -460,6 +461,11 @@ export type SavingListRelationFilter = {
 
 export type SavingOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type SavingUserIdMonthCompoundUniqueInput = {
+  userId: string
+  month: string
 }
 
 export type SavingCountOrderByAggregateInput = {

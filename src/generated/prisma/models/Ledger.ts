@@ -246,6 +246,7 @@ export type LedgerOrderByWithRelationInput = {
 
 export type LedgerWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  type_referenceId?: Prisma.LedgerTypeReferenceIdCompoundUniqueInput
   AND?: Prisma.LedgerWhereInput | Prisma.LedgerWhereInput[]
   OR?: Prisma.LedgerWhereInput[]
   NOT?: Prisma.LedgerWhereInput | Prisma.LedgerWhereInput[]
@@ -255,7 +256,7 @@ export type LedgerWhereUniqueInput = Prisma.AtLeast<{
   referenceId?: Prisma.StringNullableFilter<"Ledger"> | string | null
   createdBy?: Prisma.StringNullableFilter<"Ledger"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Ledger"> | Date | string
-}, "id">
+}, "id" | "type_referenceId">
 
 export type LedgerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -353,6 +354,11 @@ export type LedgerUncheckedUpdateManyInput = {
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type LedgerTypeReferenceIdCompoundUniqueInput = {
+  type: $Enums.LedgerType
+  referenceId: string
 }
 
 export type LedgerCountOrderByAggregateInput = {

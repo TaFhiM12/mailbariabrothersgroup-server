@@ -1,6 +1,6 @@
 import { prisma } from "../../config/database.js";
 import { AppError } from "../../common/errors/AppError.js";
-import { LedgerType, Role, SavingStatus } from "../../generated/prisma/enums.js";
+import { LedgerType, SavingStatus } from "../../generated/prisma/enums.js";
 import { auditLogService } from "../auditLogs/auditLog.service.js";
 import { settingService } from "../settings/setting.service.js";
 import type { CreateSavingInput } from "./saving.validation.js";
@@ -15,7 +15,6 @@ const assertMonthlySavingPolicy = async (
       select: {
         id: true,
         isActive: true,
-        role: true,
       },
     }),
     settingService.getSettings(),
@@ -23,10 +22,6 @@ const assertMonthlySavingPolicy = async (
 
   if (!user || !user.isActive) {
     throw new AppError(403, "Only active members can submit savings");
-  }
-
-  if (user.role !== Role.MEMBER) {
-    throw new AppError(403, "Only members can submit monthly savings");
   }
 
   const requiredAmount = Number(settings.monthlySavingAmount);
