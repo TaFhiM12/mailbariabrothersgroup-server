@@ -35,6 +35,11 @@ const normalizeRequiredString = (value: string | undefined) => {
   return value.trim();
 };
 
+const getCurrentMonth = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+};
+
 export const userService = {
   updateMyProfile: async (id: string, payload: UpdateMyProfileInput) => {
     const updateData = {
@@ -61,12 +66,101 @@ export const userService = {
   },
 
   getAllUsers: async () => {
-    return prisma.user.findMany({
-      select: userSelect,
-      orderBy: {
-        createdAt: "desc",
-      },
+    const month = getCurrentMonth();
+    const [users, allSavings, currentMonthSavings] = await Promise.all([
+      prisma.user.findMany({
+        select: userSelect,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.saving.groupBy({
+        by: ["userId", "status"],
+        _sum: {
+          amount: true,
+        },
+        _count: {
+          _all: true,
+        },
+      }),
+      prisma.saving.groupBy({
+        by: ["userId"],
+        where: {
+          month,
+          status: "APPROVED",
+        },
+        _sum: {
+          amount: true,
+        },
+        _count: {
+          _all: true,
+        },
+      }),
+    ]);
+
+    const summaryByUser = new Map<
+      string,
+      {
+        approvedTotal: number;
+        pendingTotal: number;
+        rejectedTotal: number;
+        approvedCount: number;
+        pendingCount: number;
+        rejectedCount: number;
+        currentMonthApprovedTotal: number;
+        currentMonthApprovedCount: number;
+      }
+    >();
+
+    const ensureSummary = (userId: string) => {
+      const existing = summaryByUser.get(userId);
+
+      if (existing) return existing;
+
+      const summary = {
+        approvedTotal: 0,
+        pendingTotal: 0,
+        rejectedTotal: 0,
+        approvedCount: 0,
+        pendingCount: 0,
+        rejectedCount: 0,
+        currentMonthApprovedTotal: 0,
+        currentMonthApprovedCount: 0,
+      };
+
+      summaryByUser.set(userId, summary);
+
+      return summary;
+    };
+
+    allSavings.forEach((saving) => {
+      const summary = ensureSummary(saving.userId);
+      const amount = Number(saving._sum.amount ?? 0);
+      const count = saving._count._all;
+
+      if (saving.status === "APPROVED") {
+        summary.approvedTotal = amount;
+        summary.approvedCount = count;
+      } else if (saving.status === "PENDING") {
+        summary.pendingTotal = amount;
+        summary.pendingCount = count;
+      } else if (saving.status === "REJECTED") {
+        summary.rejectedTotal = amount;
+        summary.rejectedCount = count;
+      }
     });
+
+    currentMonthSavings.forEach((saving) => {
+      const summary = ensureSummary(saving.userId);
+
+      summary.currentMonthApprovedTotal = Number(saving._sum.amount ?? 0);
+      summary.currentMonthApprovedCount = saving._count._all;
+    });
+
+    return users.map((user) => ({
+      ...user,
+      savingsSummary: ensureSummary(user.id),
+    }));
   },
 
   getSingleUser: async (id: string) => {

@@ -2,82 +2,25 @@ import { prisma } from "../../config/database.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { LedgerType, SavingStatus } from "../../generated/prisma/enums.js";
 import { auditLogService } from "../auditLogs/auditLog.service.js";
-import { settingService } from "../settings/setting.service.js";
 import type { CreateSavingInput } from "./saving.validation.js";
 
-const assertMonthlySavingPolicy = async (
-  userId: string,
-  amount: number
-) => {
-  const [user, settings] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        isActive: true,
-      },
-    }),
-    settingService.getSettings(),
-  ]);
+const assertActiveUser = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      isActive: true,
+    },
+  });
 
   if (!user || !user.isActive) {
-    throw new AppError(403, "Only active members can submit savings");
-  }
-
-  const requiredAmount = Number(settings.monthlySavingAmount);
-
-  if (Math.abs(amount - requiredAmount) > 0.001) {
-    throw new AppError(
-      400,
-      `Monthly saving amount must be ${requiredAmount}`
-    );
+    throw new AppError(403, "Only active users can submit savings");
   }
 };
 
 export const savingService = {
   createSaving: async (userId: string, payload: CreateSavingInput) => {
-    await assertMonthlySavingPolicy(userId, payload.amount);
-
-    const existingSaving = await prisma.saving.findFirst({
-      where: {
-        userId,
-        month: payload.month,
-      },
-    });
-
-    if (existingSaving) {
-      if (existingSaving.status === SavingStatus.REJECTED) {
-        const saving = await prisma.saving.update({
-          where: {
-            id: existingSaving.id,
-          },
-          data: {
-            amount: payload.amount,
-            note: payload.note,
-            proofImageUrl: payload.proofImageUrl,
-            status: SavingStatus.PENDING,
-            rejectedAt: null,
-            approvedBy: null,
-            approvedAt: null,
-          },
-        });
-
-        await auditLogService.createAuditLog({
-          action: "SAVING_RESUBMITTED",
-          userId,
-          metadata: {
-            savingId: saving.id,
-            amount: String(saving.amount),
-            month: saving.month,
-            proofImageUrl: saving.proofImageUrl,
-          },
-        });
-
-        return saving;
-      }
-
-      throw new AppError(409, "Saving already submitted for this month");
-    }
+    await assertActiveUser(userId);
 
     const saving = await prisma.saving.create({
       data: {

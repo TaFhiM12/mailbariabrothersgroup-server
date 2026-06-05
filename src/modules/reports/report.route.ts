@@ -33,7 +33,7 @@ router.get(
 
 router.get(
   "/member-savings/:userId",
-  roleMiddleware(Role.PRESIDENT, Role.ACCOUNTANT),
+  roleMiddleware(Role.PRESIDENT, Role.ACCOUNTANT, Role.COORDINATOR),
   validateRequest(memberReportSchema),
   reportController.memberSavingsReport
 );

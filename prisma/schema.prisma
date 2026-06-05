@@ -85,7 +85,6 @@ model Saving {
   @@index([userId])
   @@index([month])
   @@index([status])
-  @@unique([userId, month])
   @@map("savings")
 }
 
