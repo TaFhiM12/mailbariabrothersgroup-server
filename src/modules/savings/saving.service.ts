@@ -1,7 +1,12 @@
 import { prisma } from "../../config/database.js";
 import { AppError } from "../../common/errors/AppError.js";
-import { LedgerType, SavingStatus } from "../../generated/prisma/enums.js";
+import {
+  LedgerType,
+  Role,
+  SavingStatus,
+} from "../../generated/prisma/enums.js";
 import { auditLogService } from "../auditLogs/auditLog.service.js";
+import { notificationService } from "../notifications/notification.service.js";
 import type { CreateSavingInput } from "./saving.validation.js";
 
 const assertActiveUser = async (userId: string) => {
@@ -10,17 +15,25 @@ const assertActiveUser = async (userId: string) => {
     select: {
       id: true,
       isActive: true,
+      name: true,
     },
   });
 
   if (!user || !user.isActive) {
     throw new AppError(403, "Only active users can submit savings");
   }
+
+  return user;
 };
+
+const formatMoney = (amount: unknown) =>
+  new Intl.NumberFormat("en-BD", {
+    maximumFractionDigits: 0,
+  }).format(Number(amount));
 
 export const savingService = {
   createSaving: async (userId: string, payload: CreateSavingInput) => {
-    await assertActiveUser(userId);
+    const user = await assertActiveUser(userId);
 
     const saving = await prisma.saving.create({
       data: {
@@ -31,6 +44,17 @@ export const savingService = {
         proofImageUrl: payload.proofImageUrl,
       },
     });
+
+    await notificationService.createNotificationsForRoles(
+      [Role.PRESIDENT, Role.COORDINATOR, Role.ACCOUNTANT],
+      {
+        excludeUserIds: [userId],
+        title: "New Saving Submitted",
+        message: `${user.name} submitted BDT ${formatMoney(
+          saving.amount
+        )} for ${saving.month}. Please review the payment proof.`,
+      }
+    );
 
     await auditLogService.createAuditLog({
       action: "SAVING_CREATED",
@@ -125,8 +149,25 @@ export const savingService = {
         where: {
           id: savingId,
         },
+        include: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
     });
+
+    await notificationService.createNotificationsForUsers(
+      [approvedSaving.userId],
+      {
+        title: "Saving Approved",
+        message: `Your BDT ${formatMoney(approvedSaving.amount)} saving for ${
+          approvedSaving.month
+        } has been approved and added to your account.`,
+      }
+    );
 
     await auditLogService.createAuditLog({
       action: "SAVING_APPROVED",
@@ -142,7 +183,11 @@ export const savingService = {
     return approvedSaving;
   },
 
-  rejectSaving: async (savingId: string, rejectedBy?: string) => {
+  rejectSaving: async (
+    savingId: string,
+    rejectedBy?: string,
+    reason?: string
+  ) => {
     const rejectedSaving = await prisma.$transaction(async (tx) => {
       const saving = await tx.saving.findUnique({
         where: {
@@ -181,8 +226,31 @@ export const savingService = {
         where: {
           id: savingId,
         },
+        include: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
     });
+
+    const rejectionReason = reason?.trim();
+
+    await notificationService.createNotificationsForUsers(
+      [rejectedSaving.userId],
+      {
+        title: "Saving Rejected",
+        message: rejectionReason
+          ? `Your BDT ${formatMoney(rejectedSaving.amount)} saving for ${
+              rejectedSaving.month
+            } was rejected. Reason: ${rejectionReason}`
+          : `Your BDT ${formatMoney(rejectedSaving.amount)} saving for ${
+              rejectedSaving.month
+            } was rejected. Please check the payment proof and submit again if needed.`,
+      }
+    );
 
     await auditLogService.createAuditLog({
       action: "SAVING_REJECTED",
@@ -192,6 +260,7 @@ export const savingService = {
         memberId: rejectedSaving.userId,
         amount: String(rejectedSaving.amount),
         month: rejectedSaving.month,
+        reason: rejectionReason,
       },
     });
 

@@ -6,6 +6,7 @@ import { AppError } from "../../common/errors/AppError.js";
 import { env } from "../../config/env.js";
 import { createToken } from "../../lib/jwt.js";
 import { sendEmail } from "../../lib/email.js";
+import { notificationService } from "../notifications/notification.service.js";
 import type {
   ForgotPasswordInput,
   LoginInput,
@@ -75,6 +76,14 @@ export const authService = {
       },
       select: authUserSelect,
     });
+
+    await notificationService.createNotificationsForRoles(
+      [Role.PRESIDENT, Role.COORDINATOR],
+      {
+        title: "New Member Registered",
+        message: `${user.name} created a member account using ${user.email}. Please review the member list if approval or role changes are needed.`,
+      }
+    );
 
     const token = await createToken({
       userId: user.id,

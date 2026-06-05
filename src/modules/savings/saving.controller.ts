@@ -70,7 +70,8 @@ export const savingController = {
         try {
             const result = await savingService.rejectSaving(
                 req.params.id as string,
-                req.user!.id
+                req.user!.id,
+                req.body?.note
             );
 
             sendResponse({

@@ -1,5 +1,6 @@
 import { prisma } from "../../config/database.js";
 import { AppError } from "../../common/errors/AppError.js";
+import { notificationService } from "../notifications/notification.service.js";
 import type {
   CreateNoticeInput,
   UpdateNoticeInput,
@@ -7,13 +8,23 @@ import type {
 
 export const noticeService = {
   createNotice: async (createdBy: string, payload: CreateNoticeInput) => {
-    return prisma.notice.create({
+    const notice = await prisma.notice.create({
       data: {
         title: payload.title,
         body: payload.body,
         createdBy,
       },
     });
+
+    await notificationService.createNotificationsForAllActiveUsers({
+      excludeUserIds: [createdBy],
+      title: "New Club Notice",
+      message: `${notice.title}: ${notice.body.slice(0, 140)}${
+        notice.body.length > 140 ? "..." : ""
+      }`,
+    });
+
+    return notice;
   },
 
   getAllNotices: async () => {

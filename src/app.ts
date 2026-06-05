@@ -7,8 +7,18 @@ import { appRoutes } from "./routes/index.js";
 
 const app = express();
 
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 const helmet = helmetPkg as unknown as () => RequestHandler;
 app.use(helmet());
+
+const getNumberEnv = (key: string, fallback: number) => {
+  const value = Number(process.env[key]);
+
+  return Number.isFinite(value) && value > 0 ? value : fallback;
+};
 
 const normalizeOrigin = (origin: string) => origin.replace(/\/$/, "");
 
@@ -39,13 +49,13 @@ app.use(
 app.use(express.json({ limit: "10kb" }));
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 100,
+  windowMs: getNumberEnv("RATE_LIMIT_WINDOW_MS", 15 * 60 * 1000),
+  limit: getNumberEnv("RATE_LIMIT_MAX", 1000),
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     success: false,
-    message: "Too many requests, please try again later",
+    message: "Too many requests. Please wait a moment and try again.",
   },
 });
 
