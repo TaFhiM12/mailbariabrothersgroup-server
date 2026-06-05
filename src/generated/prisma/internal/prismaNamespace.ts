@@ -1263,6 +1263,7 @@ export const NoticeScalarFieldEnum = {
   id: 'id',
   title: 'title',
   body: 'body',
+  imageUrl: 'imageUrl',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

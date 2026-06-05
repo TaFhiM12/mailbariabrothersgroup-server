@@ -1,6 +1,7 @@
 import { prisma } from "../../config/database.js";
 import { AppError } from "../../common/errors/AppError.js";
 import type { Role } from "../../generated/prisma/enums.js";
+import { auditLogService } from "../auditLogs/auditLog.service.js";
 import type { UpdateMyProfileInput } from "./user.validation.js";
 
 const userSelect = {
@@ -176,7 +177,7 @@ export const userService = {
     return user;
   },
 
-  updateUserRole: async (id: string, role: Role) => {
+  updateUserRole: async (id: string, role: Role, updatedBy?: string) => {
     const user = await prisma.user.findUnique({
       where: { id },
     });
@@ -185,14 +186,31 @@ export const userService = {
       throw new AppError(404, "User not found");
     }
 
-    return prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id },
       data: { role },
       select: userSelect,
     });
+
+    await auditLogService.createAuditLog({
+      action: "USER_ROLE_UPDATED",
+      userId: updatedBy,
+      metadata: {
+        memberId: updatedUser.id,
+        email: updatedUser.email,
+        previousRole: user.role,
+        newRole: updatedUser.role,
+      },
+    });
+
+    return updatedUser;
   },
 
-  updateUserStatus: async (id: string, isActive: boolean) => {
+  updateUserStatus: async (
+    id: string,
+    isActive: boolean,
+    updatedBy?: string
+  ) => {
     const user = await prisma.user.findUnique({
       where: { id },
     });
@@ -201,10 +219,23 @@ export const userService = {
       throw new AppError(404, "User not found");
     }
 
-    return prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id },
       data: { isActive },
       select: userSelect,
     });
+
+    await auditLogService.createAuditLog({
+      action: isActive ? "USER_ACTIVATED" : "USER_DEACTIVATED",
+      userId: updatedBy,
+      metadata: {
+        memberId: updatedUser.id,
+        email: updatedUser.email,
+        previousStatus: user.isActive,
+        newStatus: updatedUser.isActive,
+      },
+    });
+
+    return updatedUser;
   },
 };

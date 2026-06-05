@@ -1,6 +1,7 @@
 import { prisma } from "../../config/database.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { notificationService } from "../notifications/notification.service.js";
+import { auditLogService } from "../auditLogs/auditLog.service.js";
 import type {
   CreateNoticeInput,
   UpdateNoticeInput,
@@ -12,6 +13,7 @@ export const noticeService = {
       data: {
         title: payload.title,
         body: payload.body,
+        imageUrl: payload.imageUrl || null,
         createdBy,
       },
     });
@@ -22,6 +24,16 @@ export const noticeService = {
       message: `${notice.title}: ${notice.body.slice(0, 140)}${
         notice.body.length > 140 ? "..." : ""
       }`,
+    });
+
+    await auditLogService.createAuditLog({
+      action: "NOTICE_CREATED",
+      userId: createdBy,
+      metadata: {
+        noticeId: notice.id,
+        title: notice.title,
+        imageUrl: notice.imageUrl,
+      },
     });
 
     return notice;
@@ -58,7 +70,11 @@ export const noticeService = {
 
     return prisma.notice.update({
       where: { id },
-      data: payload,
+      data: {
+        ...payload,
+        imageUrl:
+          payload.imageUrl === undefined ? undefined : payload.imageUrl || null,
+      },
     });
   },
 

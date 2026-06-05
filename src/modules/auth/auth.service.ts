@@ -7,6 +7,7 @@ import { env } from "../../config/env.js";
 import { createToken } from "../../lib/jwt.js";
 import { sendEmail } from "../../lib/email.js";
 import { notificationService } from "../notifications/notification.service.js";
+import { auditLogService } from "../auditLogs/auditLog.service.js";
 import type {
   ForgotPasswordInput,
   LoginInput,
@@ -84,6 +85,17 @@ export const authService = {
         message: `${user.name} created a member account using ${user.email}. Please review the member list if approval or role changes are needed.`,
       }
     );
+
+    await auditLogService.createAuditLog({
+      action: "MEMBER_REGISTERED",
+      userId: user.id,
+      metadata: {
+        memberId: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
 
     const token = await createToken({
       userId: user.id,

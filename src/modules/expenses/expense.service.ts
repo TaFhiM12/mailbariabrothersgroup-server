@@ -2,6 +2,7 @@ import { prisma } from "../../config/database.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { Role } from "../../generated/prisma/enums.js";
 import { notificationService } from "../notifications/notification.service.js";
+import { auditLogService } from "../auditLogs/auditLog.service.js";
 import type {
   CreateExpenseInput,
   UpdateExpenseInput,
@@ -34,6 +35,16 @@ export const expenseService = {
         )} has been added to the club account.`,
       }
     );
+
+    await auditLogService.createAuditLog({
+      action: "EXPENSE_CREATED",
+      userId: createdBy,
+      metadata: {
+        expenseId: expense.id,
+        title: expense.title,
+        amount: String(expense.amount),
+      },
+    });
 
     return expense;
   },
@@ -109,6 +120,16 @@ export const expenseService = {
         )} has been cancelled.`,
       }
     );
+
+    await auditLogService.createAuditLog({
+      action: "EXPENSE_CANCELLED",
+      userId: cancelledBy,
+      metadata: {
+        expenseId: cancelledExpense.id,
+        title: cancelledExpense.title,
+        amount: String(cancelledExpense.amount),
+      },
+    });
 
     return cancelledExpense;
   },

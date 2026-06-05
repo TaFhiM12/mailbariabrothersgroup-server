@@ -52,7 +52,8 @@ export const userController = {
     try {
       const result = await userService.updateUserRole(
         req.params.id as string,
-        req.body.role
+        req.body.role,
+        req.user!.id
       );
 
       sendResponse({
@@ -70,7 +71,8 @@ export const userController = {
     try {
       const result = await userService.updateUserStatus(
         req.params.id as string,
-        req.body.isActive
+        req.body.isActive,
+        req.user!.id
       );
 
       sendResponse({
